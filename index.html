@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Heavy Hauler &mdash; Large Truck Towing Finder</title>
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <h1>Heavy Hauler: Large Truck Towing Finder</h1>
+      <p class="subtitle">35 trim/engine configurations across 14 heavy-duty pickup lineups &mdash; Ford Super Duty, Ram HD, Chevrolet Silverado HD, and GMC Sierra HD &mdash; scoped to trucks capable of towing in the <strong>15,000&ndash;20,000 lb</strong> range on a conventional or 5th-wheel/gooseneck hitch, compared on 28 real-world towing, powertrain, and ownership metrics, plus dealerships near <strong>Port St. Lucie, FL</strong>.</p>
+      <p class="data-note">Data compiled September 2026 from Ford, Ram, Chevrolet, and GMC specifications, TowingSpecs.com, J.D. Power, Consumer Reports, and CarEdge. Dual-rear-wheel (dually) configurations are intentionally excluded &mdash; see the "How this tool is scoped" panel. <button class="link-btn" id="open-methodology">How is this scoped?</button></p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="controls" aria-label="Filter and sort">
+      <div class="control-group">
+        <label for="sort-select">Sort by</label>
+        <select id="sort-select">
+          <option value="towDesc" selected>Max Conventional Tow (high to low)</option>
+          <option value="tow5thDesc">Max 5th-Wheel/Gooseneck Tow</option>
+          <option value="priceAsc">Starting Price (low to high)</option>
+          <option value="payloadDesc">Payload Capacity</option>
+          <option value="reliability">Reliability</option>
+          <option value="torqueDesc">Torque</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label for="make-select">Make</label>
+        <select id="make-select">
+          <option value="all" selected>All makes</option>
+          <option value="Ford">Ford</option>
+          <option value="Ram">Ram</option>
+          <option value="Chevrolet">Chevrolet</option>
+          <option value="GMC">GMC</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label for="fuel-select">Fuel type</label>
+        <select id="fuel-select">
+          <option value="all" selected>Gas &amp; Diesel</option>
+          <option value="Gas">Gas</option>
+          <option value="Diesel">Diesel</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label for="min-tow">Min. conventional tow rating</label>
+        <input type="range" id="min-tow" min="14000" max="23000" step="500" value="14000" />
+        <output id="min-tow-out">14,000 lbs+</output>
+      </div>
+      <div class="control-group checkbox-group">
+        <label><input type="checkbox" id="four-by-four-only" /> 4x4 only</label>
+      </div>
+      <div class="result-count" id="result-count"></div>
+    </section>
+
+    <div class="tabs" role="tablist" aria-label="View">
+      <button class="tab-btn" role="tab" id="tab-cards" aria-controls="panel-cards" aria-selected="true">Compare Cards</button>
+      <button class="tab-btn" role="tab" id="tab-table" aria-controls="panel-table" aria-selected="false">Full Data Table (28 metrics)</button>
+    </div>
+
+    <section id="panel-cards" role="tabpanel" aria-labelledby="tab-cards">
+      <section id="cards" class="cards" aria-label="Truck comparison cards"></section>
+    </section>
+
+    <section id="panel-table" role="tabpanel" aria-labelledby="tab-table" hidden>
+      <section class="table-section">
+        <h2>Full Comparison Table</h2>
+        <p class="table-hint">Click any column header to sort by it; click again to reverse.</p>
+        <div class="table-scroll">
+          <table id="compare-table">
+            <thead>
+              <tr>
+                <th data-key="name">Truck</th>
+                <th data-key="class">Class</th>
+                <th data-key="price">Starting Price</th>
+                <th data-key="towConventional">Max Conventional Tow</th>
+                <th data-key="tow5thWheel">Max 5th-Wheel/GN Tow</th>
+                <th data-key="gcwr">GCWR</th>
+                <th data-key="gvwr">GVWR</th>
+                <th data-key="payload">Payload</th>
+                <th data-key="engine">Engine</th>
+                <th data-key="fuelType">Fuel Type</th>
+                <th data-key="hp">HP</th>
+                <th data-key="torque">Torque</th>
+                <th data-key="transmission">Transmission</th>
+                <th data-key="drivetrain">Drivetrain</th>
+                <th data-key="axleRatio">Axle Ratio</th>
+                <th data-key="cab">Cab</th>
+                <th data-key="bedLength">Bed Length</th>
+                <th data-key="curbWeight">Curb Weight</th>
+                <th data-key="wheelbase">Wheelbase</th>
+                <th data-key="fuelTank">Fuel Tank</th>
+                <th data-key="brakeController">Brake Controller</th>
+                <th data-key="swayControl">Sway Control</th>
+                <th data-key="reliability">Reliability</th>
+                <th data-key="insurance">Est. Annual Insurance</th>
+                <th data-key="nhtsa">NHTSA Rating</th>
+                <th data-key="iihs">IIHS Award</th>
+                <th data-key="warrantyBasic">Basic Warranty</th>
+                <th data-key="warrantyPowertrain">Powertrain Warranty</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div id="detail-modal" class="modal" hidden>
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <div id="methodology-modal" class="modal" hidden>
+    <div class="modal-backdrop" id="methodology-backdrop"></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="methodology-title">
+      <button class="modal-close" id="methodology-close" aria-label="Close">&times;</button>
+      <div class="methodology-content">
+        <h2 id="methodology-title">How This Tool Is Scoped</h2>
+        <p>This tool tracks heavy-duty pickups capable of towing in the <strong>15,000&ndash;20,000 lb</strong> range &mdash; the 3/4-ton (2500-series/F-250) and 1-ton single-rear-wheel (3500-series/F-350 SRW) segment. Two towing figures are shown for every configuration:</p>
+        <ul>
+          <li><strong>Max Conventional Tow</strong> &mdash; weight-distributing ball-hitch towing, the figure most relevant to a bumper-pull travel trailer or equipment trailer.</li>
+          <li><strong>Max 5th-Wheel/Gooseneck Tow</strong> &mdash; typically higher, since the hitch sits over the rear axle instead of behind the bumper.</li>
+        </ul>
+        <p><strong>Dual-rear-wheel (DRW/"dually") trucks are intentionally excluded.</strong> A dually 3500/F-350 routinely tows 30,000&ndash;40,000+ lbs via 5th-wheel or gooseneck &mdash; a different weight class and a different kind of buyer than this 15K&ndash;20K tool is built for. Where a family's dually capability is relevant context, it's mentioned in that configuration's notes, but never used as its own rating.</p>
+        <p>Gas and diesel variants of the same truck are listed as separate rows because the engine choice changes almost every other number in the comparison &mdash; towing capacity, payload, price, warranty, and insurance all shift meaningfully between them.</p>
+        <p>Neither the NHTSA nor IIHS currently publishes 5-star or Top Safety Pick ratings for this generation of heavy-duty pickups (IIHS does not crash-test HD trucks at all) &mdash; this is stated plainly per row rather than a rating being invented.</p>
+        <p>Fields marked <span class="est-badge">est.</span> are analyst estimates &mdash; typically because a manufacturer publishes a range rather than a single per-trim figure, or because GMC doesn't publish a distinct number from its mechanically identical Chevrolet twin. All other figures are stated verbatim by the cited source. Prices, incentives, and dealer inventory change frequently &mdash; always confirm current pricing, options, and exact tow ratings (via the door-jamb certification label) with the dealership before towing anything near the rated maximum.</p>
+        <p>This tool is for research purposes only and is not affiliated with any manufacturer or dealership listed.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>Built as a research tool. Verify all prices, specs, and exact tow ratings with the dealership and your truck's door-jamb certification label &mdash; figures change and dealer markups/discounts vary. Not affiliated with any manufacturer or dealer listed.</p>
+    </div>
+  </footer>
+
+  <script src="data/truck-data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
